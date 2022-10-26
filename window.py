@@ -222,22 +222,15 @@ class MainWindow:
         self.partNameEntry.icursor(END)
 
     def update_data_input(self):
-        try:
-            oldId = str(self.catch_select_item()[0])
-
-            readDB = open('dataBase.txt', 'r')
-            for x, line in enumerate(readDB.readlines()):
-                line = line.split(',')
-                if line[0] == oldId:
-                    pass
-        except:
-            pass
-
-        # doing
+        messagebox.showerror('Project incoplete', 'This function is unavaible')
+        self.partNameEntry.focus()
+        
+        # TODO
 
     def remove_selected_item(self):
-        pass
-
-        # doing
+        messagebox.showerror('Project incoplete', 'This function is unavaible')
+        self.partNameEntry.focus()
+        
+        # TODO
 
 
