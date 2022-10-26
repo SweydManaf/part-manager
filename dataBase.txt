@@ -1,5 +1,5 @@
 1,4GB DDR3 RAM,Telvio Nandza,Amazon,150
-2,Asus Mobo, Jonatas Cossa, Microcenter, 360
-3,500W PSU, Karen Johson, Newegg, 70
-4,2GB DDR4 RAM,Sam Smith, Best Buy, 180
-5,NVIDIA RTX 2080,Nadir Ilal, Amazon, 130
+2,Asus Mobo,Jonatas Cossa,Microcenter,360
+3,500W PSU,Karen Johson,Newegg,70
+4,2GB DDR4 RAM,Sam Smith,Best Buy,180
+5,NVIDIA RTX 2080,Nadir Ilal,Amazon,130
