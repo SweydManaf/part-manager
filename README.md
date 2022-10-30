@@ -15,7 +15,7 @@ No terminal ou cmd digite:
 pip install -r requirements.txt
 ```
 
-## Iniciando a Calculadora
+## Iniciando o prgrama
 
 Para iniciar, siga estas etapas no diretório raiz:
 
