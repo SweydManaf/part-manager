@@ -2,9 +2,12 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 
+from DBAdmin import BancoDeDados
 
 class MainWindow:
     def __init__(self, root):
+        self.bancoDeDados = BancoDeDados()
+
         # DATA INFORMATION FRAME
         self.dataFrame = ttk.Frame(root)
         self.dataFrame.configure(width=int(640/2), height=int(500/2))
@@ -112,25 +115,10 @@ class MainWindow:
     def load_data(self):
         # LOAD DATA ON FILE
         try:
-            with open('dataBase.txt', 'r', encoding='utf-8') as db:
-                for item in db.readlines():
-                    item = item.split(',')
-                    self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
-                db.close()
-        except:
-            pass
-
-    def count_lines_to_id(self):
-        # RETURN THE ID OR INFO IF THERE ARE NO INFORMATION
-        id = 1
-        try:
-            with open('dataBase.txt', 'r', encoding='utf-8') as db:
-                for lines in db.readlines():
-                    id += 1
-                db.close()
-            return id
-        except:
-            return id
+            for item in self.bancoDeDados.list_parts():
+                self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
+        except Exception as E:
+            print(E)
 
     def verify_data_input(self):
         name = self.partNameVar.get()
@@ -173,30 +161,15 @@ class MainWindow:
 
     def add_data_input(self):
         # LOAD DATA INFORMATION TO NEWS VARIABLES
-        id = self.count_lines_to_id()
         name = self.partNameVar.get().upper()
         customer = self.customerVar.get().title()
         retailer = self.retailerVar.get().capitalize()
         price = self.priceVar.get()
 
-        if id == 1:
-            with open('dataBase.txt', 'w', encoding='utf-8') as db:
-                db.write(f'{id},'
-                         f'{name},'
-                         f'{customer},'
-                         f'{retailer},'
-                         f'{price}\n')
-                db.close()
-            self.dataList.insert('', END, values=(id, name, customer, retailer, price))
-        else:
-            with open('dataBase.txt', 'a', encoding='utf-8') as db:
-                db.write(f'{id},'
-                         f'{name},'
-                         f'{customer},'
-                         f'{retailer},'
-                         f'{price}\n')
-                db.close()
-            self.dataList.insert('', END, values=(id, name, customer, retailer, price))
+        if not self.bancoDeDados.insert_new_part(name, customer, retailer, price):
+            messagebox.showwarning('Part Repeated', 'This part already add')
+
+        self.load_data()
 
         self.clear_data_fields()
 
@@ -228,7 +201,12 @@ class MainWindow:
         # TODO
 
     def remove_selected_item(self):
-        messagebox.showerror('Project incoplete', 'This function is unavaible')
+        index = self.dataList.selection()[0]
+        item = self.dataList.item(index)['values']
+
+        self.bancoDeDados.delete_part(str(item[0]))
+
+        self.load_data()
         self.partNameEntry.focus()
         
         # TODO
