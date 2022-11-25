@@ -4,13 +4,14 @@ from tkinter import messagebox
 
 from DBAdmin import BancoDeDados
 
+
 class MainWindow:
     def __init__(self, root):
         self.bancoDeDados = BancoDeDados()
 
         # DATA INFORMATION FRAME
         self.dataFrame = ttk.Frame(root)
-        self.dataFrame.configure(width=int(640/2), height=int(500/2))
+        self.dataFrame.configure(width=int(640 / 2), height=int(500 / 2))
 
         self.partNameVar = StringVar()
         self.partNameLabel = ttk.Label(self.dataFrame, text='Part Name')
@@ -42,7 +43,7 @@ class MainWindow:
         self.priceEntry = ttk.Entry(self.dataFrame, textvariable=self.priceVar,
                                     validate='focusout',
                                     validatecommand=self.patternPrice)
-        self.priceEntry.bind('<Return>', self.bind_change_price_to_addPart)
+        self.priceEntry.bind('<Return>', self.bind_change_price_to_addpart)
 
         self.lineDivisorLabel = ttk.Separator(self.dataFrame, orient='horizontal')
 
@@ -62,7 +63,7 @@ class MainWindow:
 
         # LIST BOX OF INFORMATION
         self.dataList = ttk.Treeview(self.viewDataFrame,
-                                    columns=('Id', 'Part Name', 'Customer', 'Retailer', 'Price'),
+                                     columns=('Id', 'Part Name', 'Customer', 'Retailer', 'Price'),
                                      show='headings')
 
         self.dataList.column('Id', width=40, minwidth=20)
@@ -126,7 +127,7 @@ class MainWindow:
     def bind_change_retailer_to_price(self, *args):
         self.priceEntry.focus()
 
-    def bind_change_price_to_addPart(self, *args):
+    def bind_change_price_to_addpart(self, *args):
         self.add_data_input()
 
     def load_data(self):
@@ -139,8 +140,8 @@ class MainWindow:
         try:
             for item in self.bancoDeDados.list_parts():
                 self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
-        except Exception as E:
-            print(E)
+        except:
+            messagebox.showwarning('SEVERAL ERRO', 'A CRITICAL ERROR OCURRED. PLEASE REPORT')
 
     def verify_data_input(self):
         name = self.partNameVar.get()
@@ -151,7 +152,7 @@ class MainWindow:
         if name == '' or customer == '' or retailer == '' or price == '':
             messagebox.showerror('Required Fields', 'Please include all fields')
         else:
-            if price.isdigit() == False:
+            if not price.isdigit():
                 messagebox.showwarning('Field Erro', 'Price must be a integer number')
             else:
                 self.add_data_input()
@@ -162,18 +163,21 @@ class MainWindow:
             return False
         else:
             return True
+
     def verify_customer_is_empty(self):
         customer = self.customerVar.get()
         if customer == '':
             return False
         else:
             return True
+
     def verify_retailer_is_empty(self):
         retailer = self.retailerVar.get()
         if retailer == '':
             return False
         else:
             return True
+
     def verify_pattern_price(self):
         price = self.priceVar.get()
         if price.isdigit():
