@@ -18,6 +18,7 @@ class MainWindow:
         self.partNameEntry = ttk.Entry(self.dataFrame, textvariable=self.partNameVar,
                                        validate='focusout',
                                        validatecommand=self.patternName)
+        self.partNameEntry.bind('<Return>', self.bind_change_name_to_customer)
 
         self.customerVar = StringVar()
         self.customerLabel = ttk.Label(self.dataFrame, text='Customer')
@@ -25,6 +26,7 @@ class MainWindow:
         self.customerEntry = ttk.Entry(self.dataFrame, textvariable=self.customerVar,
                                        validate='focusout',
                                        validatecommand=self.patternCustomer)
+        self.customerEntry.bind('<Return>', self.bind_change_customer_to_retailer)
 
         self.retailerVar = StringVar()
         self.retailerLabel = ttk.Label(self.dataFrame, text='Retailer')
@@ -32,6 +34,7 @@ class MainWindow:
         self.retailerEntry = ttk.Entry(self.dataFrame, textvariable=self.retailerVar,
                                        validate='focusout',
                                        validatecommand=self.patternRetailer)
+        self.retailerEntry.bind('<Return>', self.bind_change_retailer_to_price)
 
         self.priceVar = StringVar()
         self.priceLabel = ttk.Label(self.dataFrame, text='Price')
@@ -39,11 +42,13 @@ class MainWindow:
         self.priceEntry = ttk.Entry(self.dataFrame, textvariable=self.priceVar,
                                     validate='focusout',
                                     validatecommand=self.patternPrice)
+        self.priceEntry.bind('<Return>', self.bind_change_price_to_addPart)
 
         self.lineDivisorLabel = ttk.Separator(self.dataFrame, orient='horizontal')
 
         self.addButton = ttk.Button(self.dataFrame, text='Add Part', style='Accent.TButton',
                                     command=self.verify_data_input)
+        self.addButton.bind('<Return>', self.bind_add_part)
         self.removeButton = ttk.Button(self.dataFrame, text='Remove Part', style='Accent.TButton',
                                        command=self.remove_selected_item)
         self.updateButton = ttk.Button(self.dataFrame, text='Update Part', style='Accent.TButton',
@@ -112,8 +117,25 @@ class MainWindow:
         self.dataList.grid(row=1, column=0, pady=(20, 10), sticky='sw')
         self.scrollBarList.grid(row=1, column=1, columnspan=1, pady=(45, 15), sticky='ns')
 
+    def bind_change_name_to_customer(self, *args):
+        self.customerEntry.focus()
+
+    def bind_change_customer_to_retailer(self, *args):
+        self.retailerEntry.focus()
+
+    def bind_change_retailer_to_price(self, *args):
+        self.priceEntry.focus()
+
+    def bind_change_price_to_addPart(self, *args):
+        self.add_data_input()
+
     def load_data(self):
+        # CLEAN THE TREEVIEW
+        for item in self.dataList.get_children():
+            self.dataList.delete(item)
+
         # LOAD DATA ON FILE
+
         try:
             for item in self.bancoDeDados.list_parts():
                 self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
@@ -130,7 +152,7 @@ class MainWindow:
             messagebox.showerror('Required Fields', 'Please include all fields')
         else:
             if price.isdigit() == False:
-                messagebox.showwarning('Field Erro', 'Price must be a number')
+                messagebox.showwarning('Field Erro', 'Price must be a integer number')
             else:
                 self.add_data_input()
 
@@ -185,6 +207,9 @@ class MainWindow:
         item = self.dataList.item(index)['values']
         return item
 
+    def bind_add_part(self, *args):
+        self.add_data_input()
+
     def complete_fields_with_select_item(self, *args):
         id, name, customer, retailer, price = self.catch_select_item()
         self.partNameVar.set(name)
@@ -195,10 +220,18 @@ class MainWindow:
         self.partNameEntry.icursor(END)
 
     def update_data_input(self):
-        messagebox.showerror('Project incoplete', 'This function is unavaible')
+        selected_datas = self.catch_select_item()
+
+        name = self.partNameVar.get().upper()
+        customer = self.customerVar.get().title()
+        retailer = self.retailerVar.get().capitalize()
+        price = self.priceVar.get()
+
+        self.bancoDeDados.update_part(selected_datas[0], name, customer, retailer, price)
+
+        self.load_data()
+        self.clear_data_fields()
         self.partNameEntry.focus()
-        
-        # TODO
 
     def remove_selected_item(self):
         index = self.dataList.selection()[0]
@@ -208,7 +241,3 @@ class MainWindow:
 
         self.load_data()
         self.partNameEntry.focus()
-        
-        # TODO
-
-
