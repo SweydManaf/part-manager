@@ -54,3 +54,49 @@ class BancoDeDados:
         with self.conexao as conexao:
             conexao.execute('UPDATE pecas SET partName=?, customer=?, retailer=?, price=? WHERE id=?',
                             (partname, customer, retailer, price, id))
+
+
+    def list_parts_by_id(self, order):
+        with self.conexao:
+            if order:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY id'):
+                    yield registro
+            else:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY id DESC'):
+                    yield registro
+
+    def list_parts_by_partname(self, order):
+        with self.conexao:
+            if order:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY partName'):
+                    yield registro
+            else:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY partName DESC'):
+                    yield registro
+
+    def list_parts_by_customer(self, order):
+        with self.conexao:
+            if order:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY customer'):
+                    yield registro
+            else:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY customer DESC'):
+                    yield registro
+
+    def list_parts_by_retailer(self, order):
+        with self.conexao:
+            if order:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY retailer'):
+                    yield registro
+            else:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY retailer DESC'):
+                    yield registro
+
+    def list_parts_by_price(self, order):
+        with self.conexao:
+            if order:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY price'):
+                    yield registro
+            else:
+                for registro in self.conexao.execute('SELECT * FROM pecas ORDER BY price DESC'):
+                    yield registro
