@@ -8,6 +8,7 @@ from DBAdmin import BancoDeDados
 class MainWindow:
     def __init__(self, root):
         self.bancoDeDados = BancoDeDados()
+        self.order = 1
 
         # DATA INFORMATION FRAME
         self.dataFrame = ttk.Frame(root)
@@ -71,11 +72,11 @@ class MainWindow:
         self.dataList.column('Customer', width=120, minwidth=75)
         self.dataList.column('Retailer', width=120, minwidth=70)
         self.dataList.column('Price', width=120, minwidth=70)
-        self.dataList.heading('Id', text='ID', anchor='w')
-        self.dataList.heading('Part Name', text='Part Name', anchor='w')
-        self.dataList.heading('Customer', text='Customer', anchor='w')
-        self.dataList.heading('Retailer', text='Retailer', anchor='w')
-        self.dataList.heading('Price', text='Price', anchor='w')
+        self.dataList.heading('Id', text='ID', anchor='w', command=self.sort_list_by_id)
+        self.dataList.heading('Part Name', text='Part Name', anchor='w', command=self.sort_list_by_partname)
+        self.dataList.heading('Customer', text='Customer', anchor='w', command=self.sort_list_by_customer)
+        self.dataList.heading('Retailer', text='Retailer', anchor='w', command=self.sort_list_by_retailer)
+        self.dataList.heading('Price', text='Price', anchor='w', command=self.sort_list_by_price)
 
         self.dataList.bind('<Double-1>', self.complete_fields_with_select_item)
 
@@ -85,7 +86,7 @@ class MainWindow:
 
         # FIRST ACTIONS
         self.draw_widgets()
-        self.load_data()
+        self.call_load_data()
 
         self.partNameEntry.focus_force()
 
@@ -130,18 +131,68 @@ class MainWindow:
     def bind_change_price_to_addpart(self, *args):
         self.add_data_input()
 
-    def load_data(self):
+    def call_load_data(self):
+        self.load_data(self.bancoDeDados.list_parts())
+
+    def sort_list_by_id(self, *args):
+        self.clear_data_fields()
+        if self.order:
+            self.load_data(self.bancoDeDados.list_parts_by_id(self.order))
+            self.order = 0
+        else:
+            self.load_data(self.bancoDeDados.list_parts_by_id(self.order))
+            self.order = 1
+    def sort_list_by_partname(self, *args):
+        self.clear_data_fields()
+        if self.order:
+            self.load_data(self.bancoDeDados.list_parts_by_partname(self.order))
+            self.order = 0
+        else:
+            self.load_data(self.bancoDeDados.list_parts_by_partname(self.order))
+            self.order = 1
+
+    def sort_list_by_customer(self, *args):
+        self.clear_data_fields()
+        if self.order:
+            self.load_data(self.bancoDeDados.list_parts_by_customer(self.order))
+            self.order = 0
+        else:
+            self.load_data(self.bancoDeDados.list_parts_by_customer(self.order))
+            self.order = 1
+
+    def sort_list_by_retailer(self, *args):
+        self.clear_data_fields()
+        if self.order:
+            self.load_data(self.bancoDeDados.list_parts_by_retailer(self.order))
+            self.order = 0
+        else:
+            self.load_data(self.bancoDeDados.list_parts_by_retailer(self.order))
+            self.order = 1
+
+    def sort_list_by_price(self, *args):
+        self.clear_data_fields()
+        if self.order:
+            self.load_data(self.bancoDeDados.list_parts_by_price(self.order))
+            self.order = 0
+        else:
+            self.load_data(self.bancoDeDados.list_parts_by_price(self.order))
+            self.order = 1
+
+    def load_data(self, data):
         # CLEAN THE TREEVIEW
         for item in self.dataList.get_children():
             self.dataList.delete(item)
 
         # LOAD DATA ON FILE
-
+        print(data)
         try:
-            for item in self.bancoDeDados.list_parts():
+            for item in data:
+                print(item)
                 self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
-        except:
+        except Exception as e:
+            print(e)
             messagebox.showwarning('SEVERAL ERRO', 'A CRITICAL ERROR OCURRED. PLEASE REPORT')
+
 
     def verify_data_input(self):
         name = self.partNameVar.get()
@@ -195,7 +246,7 @@ class MainWindow:
         if not self.bancoDeDados.insert_new_part(name, customer, retailer, price):
             messagebox.showwarning('Part Repeated', 'This part already add')
 
-        self.load_data()
+        self.call_load_data()
 
         self.clear_data_fields()
 
@@ -233,7 +284,7 @@ class MainWindow:
 
         self.bancoDeDados.update_part(selected_datas[0], name, customer, retailer, price)
 
-        self.load_data()
+        self.call_load_data()
         self.clear_data_fields()
         self.partNameEntry.focus()
 
@@ -243,5 +294,5 @@ class MainWindow:
 
         self.bancoDeDados.delete_part(str(item[0]))
 
-        self.load_data()
+        self.call_load_data()
         self.partNameEntry.focus()
