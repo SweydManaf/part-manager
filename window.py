@@ -187,10 +187,8 @@ class MainWindow:
         print(data)
         try:
             for item in data:
-                print(item)
                 self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
-        except Exception as e:
-            print(e)
+        except:
             messagebox.showwarning('SEVERAL ERRO', 'A CRITICAL ERROR OCURRED. PLEASE REPORT')
 
 
