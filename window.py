@@ -184,7 +184,6 @@ class MainWindow:
             self.dataList.delete(item)
 
         # LOAD DATA ON FILE
-        print(data)
         try:
             for item in data:
                 self.dataList.insert('', END, values=(item[0], item[1], item[2], item[3], item[4]))
